@@ -1,0 +1,59 @@
+{
+  "schema_version": "2.0",
+  "project": "Illustrative project; not a verified terminology database",
+  "version": "example-1",
+  "terms": [
+    {
+      "concept_id": "kem.decapsulation",
+      "source_forms": [
+        "解封装"
+      ],
+      "canonical": "decapsulation",
+      "allowed_forms": [
+        "decapsulate",
+        "decapsulates",
+        "decapsulated"
+      ],
+      "forbidden_aliases": [
+        "decryption",
+        "unpacking"
+      ],
+      "context": "KEM operation only; payload decryption is a different concept.",
+      "status": "provisional",
+      "evidence": [],
+      "notes": "Illustrative entry. Confirm project definition and evidence before freezing."
+    },
+    {
+      "concept_id": "rag.chunk",
+      "source_forms": [
+        "文档分片"
+      ],
+      "canonical": "chunk",
+      "allowed_forms": [
+        "chunks"
+      ],
+      "forbidden_aliases": [
+        "shard"
+      ],
+      "context": "Unit of a document in this illustrative RAG project; database shards are distinct.",
+      "status": "provisional",
+      "evidence": [],
+      "notes": "Do not apply this rule to distributed-system shards."
+    },
+    {
+      "concept_id": "project.candidate-authorization",
+      "source_forms": [
+        "候选级授权"
+      ],
+      "canonical": "candidate-level authorization",
+      "allowed_forms": [],
+      "forbidden_aliases": [
+        "candidate-tier authorization"
+      ],
+      "context": "Project-defined granularity; not asserted as a universal standard.",
+      "status": "provisional",
+      "evidence": [],
+      "notes": "Author approval required."
+    }
+  ]
+}
