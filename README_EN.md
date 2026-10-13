@@ -3,7 +3,7 @@
 [English](README_EN.md) | [简体中文](README.md)
 
 Version 6.0.0. An evidence-preserving Chinese-to-English manuscript translation and review workflow for computing, medicine and other STEM disciplines.
-This is an agent skill and local QA toolkit, not a new translation model or a publication guarantee.
+This is an agent skill and local QA toolkit.
 
 ## Workflow
 
@@ -118,18 +118,12 @@ The workflow draws on translation-quality's structure inventory, role separation
 
 ## What changed in v6
 
-This local update moves directly from v4.0.0 to v6.0.0; it does not assert an intermediate v5 release.
-Building on v4's safeguards, it adapts ideas from the inspected nature-polishing v6.1.0:
+This local update moves directly from v4.0.0 to v6.0.0
 - Route by paper type, section, audience and authorized edit scope before sentence polishing.
 - Diagnose missing argumentation separately from unclear expression; flag gaps rather than fill them.
 - Clarify systems, mechanisms, evidence and boundaries, with explicit actors and cohesive information flow.
 - Add an optional language-editor and recheck changes against the source after editing.
 - Separate fidelity gates from evidence-anchored editorial ratings; no automatic perfect score for finding no errors.
-
-It does not adopt rigid 10–30-word sentences, punctuation bans or mandatory abstract templates. It does not delete background, add significance or restructure the manuscript without authorization.
-The new reference is self-contained and requires no other skill at runtime. Deterministic audit code is unchanged.
-These are workflow improvements, not demonstrated superiority across manuscripts; matched-input, multi-sample blind evaluation is still needed.
-Check the target journal's current author and AI-use policies before submission; the skill does not certify policy compliance.
 
 ## License
 
