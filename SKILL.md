@@ -1,10 +1,10 @@
 ---
 name: sci-translation-skill
-description: "面向计算机、医学及其他理工科论文的中译英与译稿审校。先锁定项目术语和论断边界，再翻译、双向核对、修订复核；保护数据、公式、引用和文档结构。在运行时支持时使用独立多 Agent 审校，否则明确采用串行自审。"
+description: "面向计算机、医学及其他理工科论文的中译英与译稿审校。锁定术语和论断边界，按章节与读者组织英文，再双向复核；保护数据、公式、引用和文档结构。有真实工具时使用独立多 Agent 审校，否则明确采用串行自审。"
 metadata:
-  version: "4.0.0"
+  version: "6.0.0"
   domain: "Computer Science, Security, AI, Medicine, STEM"
-  agents: "lead, term-researcher, translator, reviewer"
+  agents: "lead, term-researcher, translator, language-editor (optional), reviewer"
 ---
 
 # SCI Translation Skill
@@ -37,6 +37,8 @@ metadata:
 ## 0. 准备与运行时核验
 
 记录语言、领域、目标格式、期刊/英美拼写偏好（未提供时用一致的常规学术英文，不冒充已核验期刊要求）。
+用一行 context card 记录论文类型、当前章节、预期读者和编辑范围；不确定项标 unknown，只有影响含义或授权范围时才追问。
+默认保留段落结构、面向本领域学术读者；指定 Nature 等期刊也不自动授权删内容、加意义或套用未核验字数限制。
 保留原稿；为文件任务建立独立工作目录，如 outputs/translation-<run-id>/，不要复用固定 /tmp 路径。
 
 读取全文或完整结构索引，给段落、表格单元、图注、公式说明和附录分配稳定 ID。
@@ -63,23 +65,31 @@ metadata:
 核心技术歧义阻止该部分定稿；低风险候选可带 query ID 继续起草。新概念需增加条目，不擅改已冻结条目。
 禁止把示例词表当成每篇稿件的默认知识；示例见 [terminology-glossary.sample.json](examples/terminology-glossary.sample.json)。
 
-## 2. 忠实首译与清晰化
+## 2. 忠实首译 → 读者导向编辑
 
 对照 claim-map，先完整传达命题，再在原段内部组织自然英文。
 保持每个信息单元可追溯；不将“忠实”理解为逐字硬译。
+首译后读取 [reader-oriented-editing.md](references/reader-oriented-editing.md)，先诊断章节任务、指代和信息负荷，再处理句子：
+- 区分系统/组件是什么、如何工作、证据及适用边界，明确执行主体与流程顺序；
+- 按章节组织已有信息，建立清楚的主题衔接；缺失的论证列 query，不以润色补齐；
+- 拆解高负荷长句，保持术语复现与长短句节奏，不设硬性句长或标点禁令。
+编辑须保留全部源命题、限定的作用域和引用的支持对象。超出同段改写的建议单列，未经授权不实施。
+短段可由 Translator 分两遍完成；复杂全文可增加独立 Language-editor，但不能代替最终源文审校。
 遵循 [academic-phraseology-guide.md](references/academic-phraseology-guide.md)，保留有效 hedging、优先实义动词、消除冗余主语与不必要名词化。
 不要为了术语同形而破坏语法。跨域注意点见 [domain-profiles.md](references/domain-profiles.md)。
 全文分块、共享上下文、术语变更影响面和接缝核验见 [scaling-guidelines.md](references/scaling-guidelines.md)。
 
-## 3. 独立双向审校
+## 3. 双向审校（可由独立 Reviewer 执行）
 
-Reviewer 接收原文、译文、冻结术语表、结构清单、claim-map，不先接受译者“已通过”的结论。
+Reviewer 接收原文、编辑后的译文、冻结术语表、结构清单、claim-map，不先接受译者/编辑者“已通过”的结论。
+全文翻译保留首译及编辑差异；review 模式以用户提交的译文作为编辑前稿。Reviewer 先核对源文与终稿，再对照编辑前后定位润色引入的偏移。短段可用命题对照替代额外文件。
 读取 [anti-fabrication-checklist.md](references/anti-fabrication-checklist.md)：
 - source → target：每个命题/条件/图表单元是否都有对应译文？
 - target → source：每个断言/数值/引文能否定位到原文？
 - 检查术语、数学、数据绑定、限定强度、结构及自然度；全文不能只抽查 5 段。
 按 [review-feedback-schema.md](references/review-feedback-schema.md) 输出有定位、有证据的缺陷，不报没有测量依据的百分制得分。
 样式偏好与技术错误分开，非必要同义替换不计为质量提升。
+保真合格不等于可读性优秀。比较多个译本时，按 [behavioral-evaluation.md](references/behavioral-evaluation.md) 分开报告保真门槛和有例句依据的编辑质量，不以“没发现错误”直接给满分。
 
 可运行确定性检查（Python 3 标准库，无网络）：
     python3 <skill-dir>/scripts/audit_translation.py source.tex target.tex --glossary glossary.json --alignment alignment.json --output qa-report.json
@@ -97,6 +107,7 @@ alignment.json 格式见 glossary-schema；没有对齐输入时只做文档级�
 - 在实际交付范围内完成双向覆盖，未解决 critical/major 为 0；
 - 术语和技术疑问无阻断项；全部脚本差异已人工复核并记录；
 - 数值/单位/条件/公式/引文与对应论断核对完毕；
+- 编辑后的执行主体、指代、条件作用域和段内衔接清楚；原稿本身的逻辑缺口已单列而非补写；
 - 说明实际模式、检查范围、外部核验及编译/渲染状态。
 未达门槛则交“带待确认项的译稿”，不要宣称可直接发表。
 

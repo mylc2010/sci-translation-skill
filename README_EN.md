@@ -2,15 +2,15 @@
 
 [English](README_EN.md) | [简体中文](README.md)
 
-Version 4.0.0. An evidence-preserving Chinese-to-English manuscript translation and review workflow for computing, medicine and other STEM disciplines.
+Version 6.0.0. An evidence-preserving Chinese-to-English manuscript translation and review workflow for computing, medicine and other STEM disciplines.
 This is an agent skill and local QA toolkit, not a new translation model or a publication guarantee.
 
 ## Workflow
 
-1. Preserve the source; map structure and scientific propositions.
+1. Preserve the source; record paper type, section, audience and edit scope; map structure and scientific propositions.
 2. Freeze a project glossary with concept IDs, context, approved forms and evidence.
-3. Translate faithfully, then improve clarity within paragraph boundaries.
-4. Review in both directions: source-to-target for omissions, target-to-source for additions.
+3. Translate faithfully, then edit for explicit actors, manageable sentence load and paragraph cohesion without adding arguments.
+4. Review source versus edited text in both directions, then check editing changes for newly introduced drift.
 5. Revise tracked issues and recheck the final version.
 6. Deliver the translation, glossary, review record and author queries.
 
@@ -32,6 +32,7 @@ Use the requested or runtime-default model; do not hard-code model names.
 Record actual agent IDs, known model identities, input scope and artifacts.
 Separate agents may use the same model and are not equivalent to independent human experts.
 If tools are unavailable, use serial self-review and label it honestly.
+For complex papers, an optional language-editor can handle the reader-oriented pass. The final reviewer still checks the source independently; short passages do not need another agent solely to add a role.
 
 No cross-platform runtime certification is implied.
 Loading Markdown into an editor or knowledge base does not create an independent agent team.
@@ -51,11 +52,11 @@ Do not upload unpublished manuscripts, identifiable patient data or confidential
 
 Place the directory containing SKILL.md in the host's supported skill directory.
 The local Codex installation used for this project is ~/.codex/skills/sci-translation-skill/SKILL.md.
-Back up existing versions before copying an update.
+Run this example from the repository root. Back up an existing installed version before updating it.
 
 ```bash
-mkdir -p ~/.codex/skills
-cp -R sci-translation-skill ~/.codex/skills/
+mkdir -p ~/.codex/skills/sci-translation-skill
+rsync -a --exclude '.git/' --exclude '.DS_Store' --exclude '__pycache__/' ./ ~/.codex/skills/sci-translation-skill/
 ```
 
 Refresh skill discovery or start a new session as required by the host.
@@ -70,6 +71,7 @@ Use $sci-translation-skill in pilot mode.
 Field: [field]; target journal: [journal or undecided]; format: [format].
 Build a glossary from the supplied manuscript and translate the selected Methods/Results paragraphs.
 Preserve claims, uncertainty, numbers, units, mathematics and citations.
+After the faithful draft, improve reader flow within paragraphs; do not enforce sentence-length quotas or supply missing arguments.
 Use independent review if tools are available; otherwise disclose serial self-review.
 Return the translation, locked terms, located review findings and author queries.
 ```
@@ -105,6 +107,7 @@ The legacy shell entrypoint delegates to this checker.
 - [Glossary and alignment schema](references/glossary-schema.md)
 - [Agent contracts](references/agent-contracts.md)
 - [Evidence-preserving style](references/academic-phraseology-guide.md)
+- [Reader-oriented editing](references/reader-oriented-editing.md)
 - [Domain profiles](references/domain-profiles.md)
 - [Behavioral evaluation](references/behavioral-evaluation.md)
 - [Illustrative glossary](examples/terminology-glossary.sample.json)
@@ -112,6 +115,20 @@ The legacy shell entrypoint delegates to this checker.
 
 The example glossary has no asserted external verification. Examples are not benchmark results.
 The workflow draws on translation-quality's structure inventory, role separation, bidirectional checks and final validation, while adding scientific fidelity and project-level terminology controls.
+
+## What changed in v6
+
+This local update moves directly from v4.0.0 to v6.0.0; it does not assert an intermediate v5 release.
+Building on v4's safeguards, it adapts ideas from the inspected nature-polishing v6.1.0:
+- Route by paper type, section, audience and authorized edit scope before sentence polishing.
+- Diagnose missing argumentation separately from unclear expression; flag gaps rather than fill them.
+- Clarify systems, mechanisms, evidence and boundaries, with explicit actors and cohesive information flow.
+- Add an optional language-editor and recheck changes against the source after editing.
+- Separate fidelity gates from evidence-anchored editorial ratings; no automatic perfect score for finding no errors.
+
+It does not adopt rigid 10–30-word sentences, punctuation bans or mandatory abstract templates. It does not delete background, add significance or restructure the manuscript without authorization.
+The new reference is self-contained and requires no other skill at runtime. Deterministic audit code is unchanged.
+These are workflow improvements, not demonstrated superiority across manuscripts; matched-input, multi-sample blind evaluation is still needed.
 Check the target journal's current author and AI-use policies before submission; the skill does not certify policy compliance.
 
 ## License
