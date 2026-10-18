@@ -2,6 +2,9 @@
   "schema_version": "2.0",
   "project": "Illustrative project; not a verified terminology database",
   "version": "example-1",
+  "approval": {
+    "status": "pending"
+  },
   "terms": [
     {
       "concept_id": "kem.decapsulation",

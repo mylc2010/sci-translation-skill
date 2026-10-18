@@ -1,8 +1,13 @@
 # sci-translation-skill
 
+[![License: MIT](https://img.shields.io/badge/license-MIT-2ea44f)](#许可证)
+[![Agent skill hosts](https://img.shields.io/badge/agents-Codex%20%7C%20Claude%20Code%20%7C%20OpenClaw%20%7C%20OpenCode%20%7C%20Hermes-20232a)](#支持的-agent)
+[![Skills: 1](https://img.shields.io/badge/skills-1-159bd3)](#主要文件)
+[![Language: 中文 | English](https://img.shields.io/badge/language-%E4%B8%AD%E6%96%87%20%7C%20English-2769c6)](#sci-translation-skill)
+
 [English](README_EN.md) | [简体中文](README.md)
 
-v6.0.0：面向计算机、医学及其他理工科论文的中译英与译稿审校工作流。
+1.60：面向计算机、医学及其他理工科论文的中译英与译稿审校工作流。
 它不是一个新的翻译模型，而是一套可加载到 coding agent 的翻译、术语管控和复核指令，加上本地确定性检查脚本。
 
 目标：减少术语漂移、技术失真、遗漏和格式损坏，让译稿更接近作者可审查的投稿版本。
@@ -20,30 +25,29 @@ v6.0.0：面向计算机、医学及其他理工科论文的中译英与译稿�
 
 ## 工作流
 
-1. 保留原文，记录论文类型、章节、读者和编辑范围，建立结构清单和逐段命题边界。
-2. 提取并冻结项目术语：规范译法、语境、准用词形、禁用别名、证据与未决问题。
-3. 进行忠实首译，再做读者导向编辑：明确主体、拆解高负荷句、改善段内衔接，不补论证。
-4. 对照原文与编辑稿开展双向审校；回查编辑差异，防止润色引入新错误。
-5. 按 issue ID 修订；复核最终差异和受影响术语。
-6. 交付译文、词表、审校记录和作者确认项，说明实际检查覆盖。
+1. 保留全稿原文快照，合并作者已有词表，扫描正文、图表、算法与附录的专业词和重要缩写。
+2. **先交作者可编辑的术语审阅表**；确认全部规范英文、缩写全称和争议项后锁定版本。确认前不启动正式译者。
+3. 按同一词表试译或分块译全文；译者同时处理忠实表达与学术语域。
+4. 独立审校原文与译文、全稿术语一致性、数据绑定和引用；仅对实际问题修订并复核。
+5. 交付译文、已批准词表、必要审校记录和作者问题。
 
-新论文建议先试译2–3段方法/结果，再扩展正文、图表、附录，最后定稿摘要。
+新论文在全稿术语表确认后试译 2–3 段方法/结果，再扩展全文，最后定稿摘要。独立短段只锁定该段术语，不宣称全文一致。
 
 ## 核心能力
 
 | 能力 | 如何实现 | 边界 |
 |---|---|---|
-| 项目术语锁定 | 概念 ID、冻结版本、语境、准用词形 | 不是每篇论文套同一张词表 |
+| 作者审批术语 | 全稿提取→表格审阅→版本/哈希锁定→所有 Agent 共用 | 未确认时不翻译；不能把外部查词当作者批准 |
 | 多 Agent 协作 | 有真实工具时分配术语研究、翻译、独立审校 | 无工具则串行自审，明确披露 |
 | 技术保真 | 逐段记录否定、条件、量词、证据强度 | 作者负责确认科学正确性 |
-| 语言精简 | 实义动词、自然语序、减少无信息套话 | 不删掉必要 hedging |
+| 学术语域 | 借鉴 Nature 的准确、简洁与直接陈述；检查口语填充、冠词、单位和主谓关系 | 不套用硬性字数、拼写或夸大结论 |
 | 读者导向编辑 | 按章节组织已有信息、明确主体与指代、降低句子负荷 | 不补意义、不跨段搬移、不硬性限制句长 |
 | 分开评价 | 先检查保真门槛，再用例句评价阅读质量 | 零个已发现错误不自动等于满分 |
-| 格式保护 | 结构清单、公式/宏/引文及表格坐标核对 | 复杂格式还需人工/渲染验证 |
+| 格式保护 | 必要的结构边界、公式/宏/引文及表格坐标核对 | 复杂格式还需人工/渲染验证 |
 | 自动差异检查 | 数字、保护片段、引用次数、基本结构、对齐及登记术语 | 不等于自动语义审稿 |
 
 “多 Agent”是多个独立任务上下文，不自动意味着多个不同模型或人类专家。
-run-manifest 记录真实角色 ID 和已知模型，不写虚构团队日志。
+运行记录说明实际角色和版本，不写虚构团队日志。默认不另设 Language-editor，也不为每段强制生成多份文档。
 
 ## 适用领域
 
@@ -57,7 +61,7 @@ run-manifest 记录真实角色 ID 和已知模型，不写虚构团队日志。
 
 将包含 SKILL.md 的 sci-translation-skill 目录放入宿主实际支持的技能目录，避免重复嵌套。
 
-也可以直接给任何的智能体仓库地址，让他安装技能即可。
+支持从仓库安装技能的宿主也可使用本仓库地址；是否能自动安装取决于宿主及其权限，不要把给出链接等同于安装成功。
 
 需要手动安装的参考：
 
@@ -71,25 +75,40 @@ rsync -a --exclude '.git/' --exclude '.DS_Store' --exclude '__pycache__/' ./ ~/.
 
 安装后在宿主中刷新技能或新开会话，确认能够读取 SKILL.md；本文件不替代当前宿主配置文档。
 
-其他宿主迁移：
-- Claude Code：按当前版本支持的 skill 目录加载；只有工具真实暴露时才启用独立团队。
-- Antigravity、Cursor、Windsurf、Aider：先确认其技能/规则加载接口，再显式加载入口及所需 references。
-- Dify、FastGPT、Coze 或自建 Harness：需自行实现角色节点、依赖、文件传递及运行记录；仅上传知识库不构成多 Agent 流水线。
+### 支持的 Agent
+
+下表表示这些宿主有加载 `SKILL.md` 目录的接口，**不是本 skill 在每个平台上的端到端实机认证**；当前仅 Codex 本地安装已使用。复制时保留 `references/`、`scripts/` 和 `examples/`。
+
+| Agent | 技能目录或安装入口 | 本仓库验证状态 |
+|---|---|---|
+| Codex | `~/.codex/skills/sci-translation-skill/` | 已在本地使用 |
+| [Claude Code](https://code.claude.com/docs/en/skills) | `~/.claude/skills/sci-translation-skill/` | 官方支持该目录；本仓库未实机验证 |
+| [OpenClaw](https://docs.openclaw.ai/tools/skills) | 通过 `openclaw skills install ./path/to/sci-translation-skill` 导入，或放入其技能目录 | 官方支持本地技能导入；本仓库未实机验证 |
+| [OpenCode](https://opencode.ai/docs/skills) | `~/.config/opencode/skills/sci-translation-skill/` | 官方支持该目录；本仓库未实机验证 |
+| [Hermes Agent](https://hermes-agent.nousresearch.com/docs/guides/work-with-skills/) | `~/.hermes/skills/sci-translation-skill/` | 官方支持该目录；本仓库未实机验证 |
+
+Antigravity、Cursor、Windsurf、Aider 等宿主须先确认其技能/规则加载接口，再显式加载入口及所需 references。Dify、FastGPT、Coze 或自建 Harness 还需自行实现角色节点、依赖、文件传递及运行记录；仅上传知识库不构成多 Agent 流水线。
 
 没有这些宿主的逐平台实机验证，不能仅凭复制文件宣称全部“开箱即用”。
 技能不要求固定 Sonnet/Opus，不擅改宿主配置。脚本只需 Python 3 标准库。
 
 ## 可复制提示词
 
-首次使用：
+首次使用：先审术语，**本轮不要翻译**。
 ```text
-使用 $sci-translation-skill，以 pilot 模式翻译论文。
+使用 $sci-translation-skill，为这篇完整论文做翻译前术语锁定。
 领域：[学科]；目标期刊：[名称或未定]；格式：[LaTeX/Word/纯文本]。
-先从正文、公式说明、图表和附录建立术语表，再试译我指定的2–3段。
-先忠实翻译，再按章节和读者整理段内信息；明确动作主体与指代，不硬性凑句长。
-保留原文的因果、否定、限定和数值，不补实验、引用或安全保证。
-有独立 Agent 工具时分工复核，否则说明串行自审。
-输出译文、冻结术语、带定位的修订说明与作者确认项。
+先读取我已有的术语表，再扫描标题、摘要、正文、公式说明、图表、算法和附录。
+输出可供我审阅的表格：概念、语境/位置、唯一英文、缩写及全称、准用词形、疑问。
+列出未覆盖内容。本轮只交术语表，等我确认后再开始 pilot 翻译。
+```
+
+确认表格后的第二条消息：
+```text
+这份术语表已确认：[路径/版本]；我修改了：[行号或“无”]。
+请用 $sci-translation-skill 校验锁定版本，再试译[方法/结果2–3段]或继续全文。
+所有译者与审校者使用同一词表，保留数值、限定、公式、引用与 LaTeX 宏。
+用准确、简洁的学术英语，不用口语填充词；新术语先请我确认。
 ```
 
 已有中英对照稿：
@@ -103,10 +122,10 @@ rsync -a --exclude '.git/' --exclude '.DS_Store' --exclude '__pycache__/' ./ ~/.
 
 全文：
 ```text
-使用 $sci-translation-skill，按已确认的词表翻译全文。
+使用 $sci-translation-skill，先扫描全稿并交术语审阅表；如果我已明确批准这张完整表，校验后直接翻译全文。
 在新目录交付，不覆盖原文。各块共享同一版本词表和研究上下文。
 覆盖正文、图注、表格、公式说明、算法与附录；最后核对摘要的论断范围。
-交付英文稿、词表、逐段对齐、审校闭环记录和待确认项。
+交付英文稿、锁定词表、必要的对齐/审校记录和待确认项，不强制生成空文件。
 ```
 
 
@@ -114,13 +133,14 @@ rsync -a --exclude '.git/' --exclude '.DS_Store' --exclude '__pycache__/' ./ ~/.
 
 ```bash
 bash references/test-skill-integrity.sh
+python3 scripts/check_glossary_gate.py terminology-glossary.json --source source-snapshot.txt
 python3 scripts/audit_translation.py source.tex target.tex \
   --glossary terminology-glossary.json \
   --alignment alignment.json \
   --output qa-report.json
 ```
 
-退出码：0=已实现检查未发现差异；1=发现待核查差异；2=输入/解析错误。
+术语门槛：0=审批记录与词表/原稿快照匹配；1=未放行；2=输入错误。译稿审计：0=已实现检查未发现差异；1=待核查；2=输入错误。
 0 **不表示投稿就绪**。未提供 alignment 时，不声称完成逐段覆盖或术语合规检查。
 有些正确的数字顺序/格式调整也可能触发差异，需要记录人工处置。
 
@@ -134,27 +154,23 @@ bash references/test-translation-structure.sh source.tex target.tex glossary.jso
 ## 主要文件
 
 - [SKILL.md](SKILL.md)：入口与放行条件。
-- [术语契约](references/glossary-schema.md)：统一 schema 与 alignment 格式。
+- [术语审批契约](references/glossary-schema.md)：审阅表、作者确认门槛、JSON schema 与 alignment 格式。
+- [术语门槛脚本](scripts/check_glossary_gate.py)：校验版本、条目和原稿快照；不代替真实作者审批。
 - [角色契约](references/agent-contracts.md)：真实工具和文件所有权。
 - [语言指南](references/academic-phraseology-guide.md)：忠实、简洁与自然表达。
-- [读者导向编辑](references/reader-oriented-editing.md)：v6 的章节路由、句内负荷、衔接与编辑后保真回查。
+- [读者导向编辑](references/reader-oriented-editing.md)：章节、句内负荷、衔接与编辑后保真回查。
 - [领域配置](references/domain-profiles.md)：各领域的重点风险。
 - [行为评测](references/behavioral-evaluation.md)：模型行为验收方案。
 - [示例词表](examples/terminology-glossary.sample.json)：字段演示，未外部核验，不自动套用。
 - [翻译示例](examples/translation-diff-sample.md)：构造案例，不是已发表的效果证明。
 
-## v6 改进来源与限制
+## 1.60 更新
 
-
-保留 v4 从 translation-quality 吸收的结构清单、职责分离、双向防捏造核查、终稿复核和运行时诚实降级。
-在此基础上，增加如下特性：
-
-- 先看论文类型、章节任务和读者，再处理语言；
-- 先诊断论证缺口与表达障碍，不靠换词掩盖缺证据；
-- 明确系统、机制、证据与边界，建立句间衔接；
-- 增加可选 Language-editor，仍由独立 Reviewer 对照源文把关；
-- 将保真门槛与编辑质量分开，避免“无错即满分”的评分失真。
+**全稿术语门槛**：摘要、正文、图表、附录使用同一版本，缩写全称与准用词形一并审定；新增术语走增量审批。
+借鉴 translation-quality 的结构与独立审校，以及 nature-polishing 的读者路径、精准简洁和学术语域检查；不照搬前者“译者与术语研究并行启动”或后者的硬性句长、写作模板。
+为减少耗时，将每段 claim-map/结构清单改为按风险建立，译者默认合并忠实翻译和语言整理，专门 Language-editor 只在需要时启用；脚本筛查后由 Reviewer 对全稿做有重点的语义核对。
+参考 `nature-polishing` 的章节职责，在现有终稿复核中增加轻量的跨章节论断对齐：核对引言承诺与结果、摘要结论与证据、讨论局限与其所约束的具体结论；发现原文缺口只提作者问题，不擅自补写或重排正文。
 
 ## 许可证
 
-MIT License.
+README 当前声明 MIT License；仓库尚无独立的 `LICENSE` 文件，公开分发前建议由权利人确认并补齐正式许可文本。

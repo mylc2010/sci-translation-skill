@@ -17,6 +17,12 @@
 - 删除连接词前检查递进、转折、因果是否仍清楚。However、Moreover 不是错误或 AI 证据。
 - 允许正常 scientific hedging。may、suggest、preliminary、under the tested conditions 不是要消除的“学生腔”。
 
+## 学术语域：借鉴 Nature 的精确与节制
+
+在语义和作者词表已锁定后，再检查口语填充、缩略口语、模糊评价与机械套话。避免正文里用 `a lot of`、`kind of`、`pretty good`、`huge`、`get better`、反问句或口语缩写（`don't`、`can't`）；按原意写成有明确对象的学术句。不要把每个常见词替换成冷僻词。
+可用自然的学术动词直接陈述观察，例如原文“误差降低”可写 `the error decreased`，前提是原文确实报告该变化；不能自行补上显著性、幅度或普遍性。
+专业性还来自主谓关系、冠词、单位、时态和段内信息顺序；先修正可定位的语法/歧义，不凭“像 Nature”打分或套用其版面、拼写与字数限制。目标期刊和作者指定语体优先。
+
 ## 用户 A/B 反馈的可迁移规律
 
 | 表达选择 | 决策依据 |

@@ -8,7 +8,7 @@ import re
 import sys
 
 root = Path(sys.argv[1])
-required = ["SKILL.md", "README.md", "README_EN.md", "scripts/audit_translation.py", "scripts/test_audit_translation.py", "examples/terminology-glossary.sample.json"]
+required = ["SKILL.md", "README.md", "README_EN.md", "scripts/audit_translation.py", "scripts/check_glossary_gate.py", "scripts/test_audit_translation.py", "scripts/test_glossary_gate.py", "examples/terminology-glossary.sample.json"]
 for name in required:
     if not (root / name).is_file():
         raise SystemExit(f"Missing resource: {name}")
@@ -21,3 +21,4 @@ json.loads((root / "examples/terminology-glossary.sample.json").read_text(encodi
 print("Resource/link checks passed; this is not a translation quality verdict.")
 PY
 PYTHONDONTWRITEBYTECODE=1 python3 "$skill_dir/scripts/test_audit_translation.py"
+PYTHONDONTWRITEBYTECODE=1 python3 "$skill_dir/scripts/test_glossary_gate.py"
