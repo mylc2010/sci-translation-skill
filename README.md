@@ -173,4 +173,4 @@ bash references/test-translation-structure.sh source.tex target.tex glossary.jso
 
 ## 许可证
 
-README 当前声明 MIT License；仓库尚无独立的 `LICENSE` 文件，公开分发前建议由权利人确认并补齐正式许可文本。
+README 当前声明 MIT License；

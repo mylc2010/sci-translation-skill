@@ -167,4 +167,4 @@ Following `nature-polishing`'s section-aware approach, the existing final review
 
 ## License
 
-The README currently declares the MIT License, but the repository does not yet contain a separate `LICENSE` file. Before public distribution, the rights holder should confirm and add the formal license text.
+The README currently declares the MIT License.
