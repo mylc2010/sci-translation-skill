@@ -81,10 +81,10 @@ The hosts below provide a way to load `SKILL.md` directories. **This is not end-
 | Agent | Skill directory or installation entry point | Status for this repository |
 |---|---|---|
 | Codex | `~/.codex/skills/sci-translation-skill/` | Used locally |
-| [Claude Code](https://code.claude.com/docs/en/skills) | `~/.claude/skills/sci-translation-skill/` | Official loader available; not tested with this repository |
-| [OpenClaw](https://docs.openclaw.ai/tools/skills) | Import with `openclaw skills install ./path/to/sci-translation-skill`, or use its skill directory | Official local-skill import available; not tested with this repository |
-| [OpenCode](https://opencode.ai/docs/skills) | `~/.config/opencode/skills/sci-translation-skill/` | Official loader available; not tested with this repository |
-| [Hermes Agent](https://hermes-agent.nousresearch.com/docs/guides/work-with-skills/) | `~/.hermes/skills/sci-translation-skill/` | Official loader available; not tested with this repository |
+| [Claude Code](https://code.claude.com/docs/en/skills) | `~/.claude/skills/sci-translation-skill/` | Official loader available |
+| [OpenClaw](https://docs.openclaw.ai/tools/skills) | Import with `openclaw skills install ./path/to/sci-translation-skill`, or use its skill directory | Official local-skill import available |
+| [OpenCode](https://opencode.ai/docs/skills) | `~/.config/opencode/skills/sci-translation-skill/` | Official loader available |
+| [Hermes Agent](https://hermes-agent.nousresearch.com/docs/guides/work-with-skills/) | `~/.hermes/skills/sci-translation-skill/` | Official loader available |
 
 For Antigravity, Cursor, Windsurf, Aider, and similar hosts, check their skill or rule-loading interfaces before loading this entry point and its references. Dify, FastGPT, Coze, and custom harnesses require their own role nodes, dependencies, file transfer, and run records; adding this skill to a knowledge base alone does not create a multi-agent pipeline.
 
@@ -163,9 +163,7 @@ Neither shell test script detects "AI writing" or certifies domain accuracy.
 ## Version 1.60 update
 
 **Full-manuscript terminology gate:** the abstract, body, figures, tables, and appendices use one approved version; acronym expansions and allowed grammatical forms are reviewed together. New terms require incremental approval.
-The workflow borrows structure and independent review from `translation-quality`, and reader flow, precision, concision, and academic-register checks from `nature-polishing`. It does not copy parallel translation before glossary approval or rigid sentence-length rules.
 To reduce turnaround time, claim maps and structural inventories are created only where risk warrants them. Translators combine faithful translation with routine language editing; a separate language editor is optional. After scripted screening, the reviewer performs focused semantic checks across the manuscript.
-Following `nature-polishing`'s section-aware approach, the existing final review now also checks whether Introduction promises match Results evidence, Abstract conclusions match the body, and Discussion limitations name the claims they qualify. Gaps in the source become author queries, not invented content or unauthorized restructuring.
 
 ## License
 

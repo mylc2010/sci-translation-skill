@@ -166,9 +166,7 @@ bash references/test-translation-structure.sh source.tex target.tex glossary.jso
 ## 1.61 更新
 
 **全稿术语门槛**：摘要、正文、图表、附录使用同一版本，缩写全称与准用词形一并审定；新增术语走增量审批。
-借鉴 translation-quality 的结构与独立审校，以及 nature-polishing 的读者路径、精准简洁和学术语域检查；不照搬前者“译者与术语研究并行启动”或后者的硬性句长、写作模板。
 为减少耗时，将每段 claim-map/结构清单改为按风险建立，译者默认合并忠实翻译和语言整理，专门 Language-editor 只在需要时启用；脚本筛查后由 Reviewer 对全稿做有重点的语义核对。
-参考 `nature-polishing` 的章节职责，在现有终稿复核中增加轻量的跨章节论断对齐：核对引言承诺与结果、摘要结论与证据、讨论局限与其所约束的具体结论；发现原文缺口只提作者问题，不擅自补写或重排正文。
 
 ## 许可证
 
