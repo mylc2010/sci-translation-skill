@@ -7,8 +7,7 @@
 
 [English](README_EN.md) | [简体中文](README.md)
 
-1.60：面向计算机、医学及其他理工科论文的中译英与译稿审校工作流。
-它不是一个新的翻译模型，而是一套可加载到 coding agent 的翻译、术语管控和复核指令，加上本地确定性检查脚本。
+1.61：面向计算机、医学及其他理工科论文的中译英与译稿审校工作流。
 
 目标：减少术语漂移、技术失真、遗漏和格式损坏，让译稿更接近作者可审查的投稿版本。
 
@@ -32,6 +31,8 @@
 5. 交付译文、已批准词表、必要审校记录和作者问题。
 
 新论文在全稿术语表确认后试译 2–3 段方法/结果，再扩展全文，最后定稿摘要。独立短段只锁定该段术语，不宣称全文一致。
+
+术语审阅表：单人审阅、约 30 项以内默认 Markdown；条目更多，或需要多人批注、筛选冲突项和跟踪逐项决定时用 Excel。协作复杂度比数量更重要；两种格式都对应同一份机器可读的锁定词表，作者的修改须同步后再重新锁定。
 
 ## 核心能力
 
@@ -82,14 +83,12 @@ rsync -a --exclude '.git/' --exclude '.DS_Store' --exclude '__pycache__/' ./ ~/.
 | Agent | 技能目录或安装入口 | 本仓库验证状态 |
 |---|---|---|
 | Codex | `~/.codex/skills/sci-translation-skill/` | 已在本地使用 |
-| [Claude Code](https://code.claude.com/docs/en/skills) | `~/.claude/skills/sci-translation-skill/` | 官方支持该目录；本仓库未实机验证 |
-| [OpenClaw](https://docs.openclaw.ai/tools/skills) | 通过 `openclaw skills install ./path/to/sci-translation-skill` 导入，或放入其技能目录 | 官方支持本地技能导入；本仓库未实机验证 |
-| [OpenCode](https://opencode.ai/docs/skills) | `~/.config/opencode/skills/sci-translation-skill/` | 官方支持该目录；本仓库未实机验证 |
-| [Hermes Agent](https://hermes-agent.nousresearch.com/docs/guides/work-with-skills/) | `~/.hermes/skills/sci-translation-skill/` | 官方支持该目录；本仓库未实机验证 |
+| [Claude Code](https://code.claude.com/docs/en/skills) | `~/.claude/skills/sci-translation-skill/` | 官方支持该目录 |
+| [OpenClaw](https://docs.openclaw.ai/tools/skills) | 通过 `openclaw skills install ./path/to/sci-translation-skill` 导入，或放入其技能目录 | 官方支持本地技能导入 |
+| [OpenCode](https://opencode.ai/docs/skills) | `~/.config/opencode/skills/sci-translation-skill/` | 官方支持该目录 |
+| [Hermes Agent](https://hermes-agent.nousresearch.com/docs/guides/work-with-skills/) | `~/.hermes/skills/sci-translation-skill/` | 官方支持该目录 |
 
 Antigravity、Cursor、Windsurf、Aider 等宿主须先确认其技能/规则加载接口，再显式加载入口及所需 references。Dify、FastGPT、Coze 或自建 Harness 还需自行实现角色节点、依赖、文件传递及运行记录；仅上传知识库不构成多 Agent 流水线。
-
-没有这些宿主的逐平台实机验证，不能仅凭复制文件宣称全部“开箱即用”。
 技能不要求固定 Sonnet/Opus，不擅改宿主配置。脚本只需 Python 3 标准库。
 
 ## 可复制提示词
@@ -164,7 +163,7 @@ bash references/test-translation-structure.sh source.tex target.tex glossary.jso
 - [示例词表](examples/terminology-glossary.sample.json)：字段演示，未外部核验，不自动套用。
 - [翻译示例](examples/translation-diff-sample.md)：构造案例，不是已发表的效果证明。
 
-## 1.60 更新
+## 1.61 更新
 
 **全稿术语门槛**：摘要、正文、图表、附录使用同一版本，缩写全称与准用词形一并审定；新增术语走增量审批。
 借鉴 translation-quality 的结构与独立审校，以及 nature-polishing 的读者路径、精准简洁和学术语域检查；不照搬前者“译者与术语研究并行启动”或后者的硬性句长、写作模板。

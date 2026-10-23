@@ -33,6 +33,8 @@ This skill aims for natural scholarly English while putting scientific meaning a
 
 For a new paper, translate a two- or three-paragraph Methods/Results pilot after the full-manuscript glossary has been approved. Then extend to the full paper and finalize the abstract last. For an isolated short passage, lock only its local terms; do not claim manuscript-wide consistency.
 
+For terminology review, default to Markdown when one author reviews roughly 30 entries or fewer. Use an editable Excel workbook for larger tables or when multiple reviewers need comments, conflict filtering, or per-entry decision tracking. Collaboration complexity matters more than the count. Both formats must reflect the same machine-readable locked glossary; synchronize author edits before locking a new version.
+
 ## Core capabilities
 
 | Capability | How it works | Boundary |
