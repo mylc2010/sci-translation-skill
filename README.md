@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-2ea44f)](#许可证)
 [![Agent skill hosts](https://img.shields.io/badge/agents-Codex%20%7C%20Claude%20Code%20%7C%20OpenClaw%20%7C%20OpenCode%20%7C%20Hermes-20232a)](#支持的-agent)
-[![Skills: 1](https://img.shields.io/badge/skills-1-159bd3)](#主要文件)
+[![Skills: 2](https://img.shields.io/badge/skills-2-159bd3)](#主要文件)
 [![Language: 中文 | English](https://img.shields.io/badge/language-%E4%B8%AD%E6%96%87%20%7C%20English-2769c6)](#sci-translation-skill)
 
 [English](README_EN.md) | [简体中文](README.md)
@@ -10,6 +10,29 @@
 1.61：面向计算机、医学及其他理工科论文的中译英与译稿审校工作流。
 
 目标：减少术语漂移、技术失真、遗漏和格式损坏，让译稿更接近作者可审查的投稿版本。
+
+## 两个独立技能
+
+| 技能 | 调用示例 | 用途 |
+|---|---|---|
+| `sci-translation-skill` | `$sci-translation-skill` | 中译英、术语确认和译稿审校；沿用旧名称。 |
+| `academic-humanizer` | `$academic-humanizer` | 根据 AI 报告标记润色英文正文，先交作者审阅，批准后才修改副本。 |
+
+二者独立安装和调用；翻译不会自动触发报告润色。检测标记不是作者身份的证据，改写不保证检测分数下降。`academic-humanizer` 默认跳过独立公式、图表及其标题、算法、代码和参考文献，正文中的行内公式原样保护。
+
+```text
+sci-translation-skill/
+├── skills/
+│   ├── sci-translation/       # 技能名称保持 sci-translation-skill
+│   └── academic-humanizer/
+├── shared/                    # 术语交接契约，不保存实际论文词表
+├── examples/                  # 项目级示例
+├── scripts/                   # 项目级测试入口
+├── README.md
+└── README_EN.md
+```
+
+报告润色先合并跨页/跨栏的同一完整句，避免重复；每个正文单元给出英文原文、中文原意、建议英文及建议中文。Word 审阅文档用浅红/浅绿背景标记词级差异；可选 Excel 用文字颜色与下划线而非声称提供局部背景色。作者审批前不修改原稿。
 
 ## 为什么不只写一句“帮我润色成SCI风格”
 
@@ -60,7 +83,7 @@
 
 ## 安装与运行时
 
-将包含 SKILL.md 的 sci-translation-skill 目录放入宿主实际支持的技能目录，避免重复嵌套。
+仓库中 `skills/sci-translation/` 和 `skills/academic-humanizer/` 是平行、自包含的技能目录；各自的入口都是该目录下的 `SKILL.md`。安装时复制这两个实际目录，不要把仓库根目录作为单个 skill 复制。
 
 支持从仓库安装技能的宿主也可使用本仓库地址；是否能自动安装取决于宿主及其权限，不要把给出链接等同于安装成功。
 
@@ -71,10 +94,12 @@
 在本仓库根目录运行的安装示例（目标已有版本时先备份）：
 ```bash
 mkdir -p ~/.codex/skills/sci-translation-skill
-rsync -a --exclude '.git/' --exclude '.DS_Store' --exclude '__pycache__/' ./ ~/.codex/skills/sci-translation-skill/
+rsync -a --exclude '.DS_Store' --exclude '__pycache__/' skills/sci-translation/ ~/.codex/skills/sci-translation-skill/
+mkdir -p ~/.codex/skills/academic-humanizer
+rsync -a --exclude '.DS_Store' --exclude '__pycache__/' skills/academic-humanizer/ ~/.codex/skills/academic-humanizer/
 ```
 
-安装后在宿主中刷新技能或新开会话，确认能够读取 SKILL.md；本文件不替代当前宿主配置文档。
+安装后在宿主中刷新技能或新开会话，确认能够读取两个入口。旧调用名称 `$sci-translation-skill` 不变。两个技能只交换作者项目中明确批准的同一版本术语表，不相互调用、不共享其他工作流。共享格式见 [术语交接契约](shared/terminology-interchange.md)；实际词表由作者保存在论文项目中，不写入技能目录。
 
 ### 支持的 Agent
 
@@ -92,6 +117,14 @@ Antigravity、Cursor、Windsurf、Aider 等宿主须先确认其技能/规则加
 技能不要求固定 Sonnet/Opus，不擅改宿主配置。脚本只需 Python 3 标准库。
 
 ## 可复制提示词
+
+按 AI 检测报告审阅（先准备检测报告及对应的英文原稿，有中文原稿和已批准术语表时一并提供）：
+```text
+使用 $academic-humanizer，读取我的检测报告及对应英文稿。
+只处理被标记的正文：补全句子，跨页同句只列一次；跳过公式、图表和标题。
+不改变原意或论断强度，给我带局部背景色的中英四部分 Word 审阅文档。
+列出无法定位的标记，等我批准后再修改原稿副本。
+```
 
 首次使用：先审术语，**本轮不要翻译**。
 ```text
@@ -131,9 +164,9 @@ Antigravity、Cursor、Windsurf、Aider 等宿主须先确认其技能/规则加
 ## 检查工具
 
 ```bash
-bash references/test-skill-integrity.sh
-python3 scripts/check_glossary_gate.py terminology-glossary.json --source source-snapshot.txt
-python3 scripts/audit_translation.py source.tex target.tex \
+bash scripts/test-all.sh
+python3 skills/sci-translation/scripts/check_glossary_gate.py terminology-glossary.json --source source-snapshot.txt
+python3 skills/sci-translation/scripts/audit_translation.py source.tex target.tex \
   --glossary terminology-glossary.json \
   --alignment alignment.json \
   --output qa-report.json
@@ -145,23 +178,24 @@ python3 scripts/audit_translation.py source.tex target.tex \
 
 原 shell 入口仍可使用：
 ```bash
-bash references/test-translation-structure.sh source.tex target.tex glossary.json
+bash skills/sci-translation/references/test-translation-structure.sh source.tex target.tex glossary.json
 ```
 
 这两个 shell 测试脚本不做“AI味检测”，也不认证领域准确性。
 
 ## 主要文件
 
-- [SKILL.md](SKILL.md)：入口与放行条件。
-- [术语审批契约](references/glossary-schema.md)：审阅表、作者确认门槛、JSON schema 与 alignment 格式。
-- [术语门槛脚本](scripts/check_glossary_gate.py)：校验版本、条目和原稿快照；不代替真实作者审批。
-- [角色契约](references/agent-contracts.md)：真实工具和文件所有权。
-- [语言指南](references/academic-phraseology-guide.md)：忠实、简洁与自然表达。
-- [读者导向编辑](references/reader-oriented-editing.md)：章节、句内负荷、衔接与编辑后保真回查。
-- [领域配置](references/domain-profiles.md)：各领域的重点风险。
-- [行为评测](references/behavioral-evaluation.md)：模型行为验收方案。
-- [示例词表](examples/terminology-glossary.sample.json)：字段演示，未外部核验，不自动套用。
-- [翻译示例](examples/translation-diff-sample.md)：构造案例，不是已发表的效果证明。
+- [翻译技能入口](skills/sci-translation/SKILL.md)：入口与放行条件。
+- [academic-humanizer](skills/academic-humanizer/SKILL.md)：报告驱动的独立英文润色技能；包含原版 Humanizer 完整框架及其 MIT 许可。
+- [术语审批契约](skills/sci-translation/references/glossary-schema.md)：审阅表、作者确认门槛、JSON schema 与 alignment 格式。
+- [术语门槛脚本](skills/sci-translation/scripts/check_glossary_gate.py)：校验版本、条目和原稿快照；不代替真实作者审批。
+- [角色契约](skills/sci-translation/references/agent-contracts.md)：真实工具和文件所有权。
+- [语言指南](skills/sci-translation/references/academic-phraseology-guide.md)：忠实、简洁与自然表达。
+- [读者导向编辑](skills/sci-translation/references/reader-oriented-editing.md)：章节、句内负荷、衔接与编辑后保真回查。
+- [领域配置](skills/sci-translation/references/domain-profiles.md)：各领域的重点风险。
+- [行为评测](skills/sci-translation/references/behavioral-evaluation.md)：模型行为验收方案。
+- [示例词表](skills/sci-translation/examples/terminology-glossary.sample.json)：字段演示，未外部核验，不自动套用。
+- [翻译示例](skills/sci-translation/examples/translation-diff-sample.md)：构造案例，不是已发表的效果证明。
 
 ## 1.61 更新
 

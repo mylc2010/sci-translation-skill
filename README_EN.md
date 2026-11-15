@@ -2,15 +2,38 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-2ea44f)](#license)
 [![Agent skill hosts](https://img.shields.io/badge/agents-Codex%20%7C%20Claude%20Code%20%7C%20OpenClaw%20%7C%20OpenCode%20%7C%20Hermes-20232a)](#supported-agents)
-[![Skills: 1](https://img.shields.io/badge/skills-1-159bd3)](#key-files)
+[![Skills: 2](https://img.shields.io/badge/skills-2-159bd3)](#key-files)
 [![Language: 中文 | English](https://img.shields.io/badge/language-%E4%B8%AD%E6%96%87%20%7C%20English-2769c6)](#sci-translation-skill)
 
 [English](README_EN.md) | [简体中文](README.md)
 
-Version 1.60: a Chinese-to-English translation and review workflow for manuscripts in computer science, medicine, and other STEM fields.
+Version 1.61: Chinese-to-English translation and review, plus a separately invoked report-driven academic editing skill.
 It is not a new translation model. It combines instructions for a coding agent with terminology control, review procedures, and local deterministic checks.
 
 The goal is to reduce terminology drift, technical misrepresentation, omissions, and formatting damage, producing a draft that authors can review before submission.
+
+## Two independent skills
+
+| Skill | Invocation example | Purpose |
+|---|---|---|
+| `sci-translation-skill` | `$sci-translation-skill` | Chinese-to-English translation, glossary approval, and review; the existing name remains unchanged. |
+| `academic-humanizer` | `$academic-humanizer` | Review report-flagged English prose and obtain author approval before editing a copy. |
+
+Install the two skill directories separately. Translation does not automatically run report-driven editing. Detector flags do not establish authorship and rewritten prose is not guaranteed to change a detector's score. Display equations, figures and captions, tables and captions, algorithms, code, and references are excluded; inline formulas in prose remain intact.
+
+```text
+sci-translation-skill/
+├── skills/
+│   ├── sci-translation/       # skill name remains sci-translation-skill
+│   └── academic-humanizer/
+├── shared/                    # interchange contract, not actual glossaries
+├── examples/                  # project-level examples
+├── scripts/                   # project-level test entry point
+├── README.md
+└── README_EN.md
+```
+
+Report review merges a sentence split across pages or columns into one unit. Each unit has full English, Chinese translation, proposed English and its Chinese translation. The default Word artifact uses light red/green run backgrounds to show word-level changes. An optional Excel tracker uses font colors and underlines rather than claiming partial-cell background colors. No manuscript is changed before approval.
 
 ## Why not just ask for an "SCI-style polish"?
 
@@ -60,7 +83,7 @@ These are additional review guidelines, not claims of extensive cross-domain val
 
 ## Installation and runtime
 
-Place the `sci-translation-skill` directory containing `SKILL.md` in a skill directory supported by your host. Do not add an extra nesting level.
+The repository contains two parallel, self-contained directories: `skills/sci-translation/` and `skills/academic-humanizer/`. Install each directory containing its own `SKILL.md`; do not install the repository root as a single skill.
 
 If the host supports installing skills from a repository, you may provide this repository's address. Supplying a link is not itself proof that installation succeeded; installation depends on the host and its permissions.
 
@@ -69,10 +92,12 @@ For a manual installation, the locally used Codex path is `~/.codex/skills/sci-t
 Run this example from the repository root, backing up an existing installed version first:
 ```bash
 mkdir -p ~/.codex/skills/sci-translation-skill
-rsync -a --exclude '.git/' --exclude '.DS_Store' --exclude '__pycache__/' ./ ~/.codex/skills/sci-translation-skill/
+rsync -a --exclude '.DS_Store' --exclude '__pycache__/' skills/sci-translation/ ~/.codex/skills/sci-translation-skill/
+mkdir -p ~/.codex/skills/academic-humanizer
+rsync -a --exclude '.DS_Store' --exclude '__pycache__/' skills/academic-humanizer/ ~/.codex/skills/academic-humanizer/
 ```
 
-Refresh the host's skill discovery or start a new session, then confirm that it can read `SKILL.md`. This README does not replace the host's current configuration documentation.
+Refresh the host's skill discovery or start a new session, then confirm both entry points. The existing `$sci-translation-skill` invocation remains unchanged. The skills do not invoke one another or share workflow state: they may read the same author-approved project glossary under the [terminology interchange contract](shared/terminology-interchange.md). The actual glossary belongs in the author's project, not in the installed skill directories.
 
 ### Supported agents
 
@@ -129,9 +154,9 @@ Deliver the English draft, locked glossary, necessary alignment/review records, 
 ## Check tools
 
 ```bash
-bash references/test-skill-integrity.sh
-python3 scripts/check_glossary_gate.py terminology-glossary.json --source source-snapshot.txt
-python3 scripts/audit_translation.py source.tex target.tex \
+bash scripts/test-all.sh
+python3 skills/sci-translation/scripts/check_glossary_gate.py terminology-glossary.json --source source-snapshot.txt
+python3 skills/sci-translation/scripts/audit_translation.py source.tex target.tex \
   --glossary terminology-glossary.json \
   --alignment alignment.json \
   --output qa-report.json
@@ -142,23 +167,24 @@ Exit code 0 **does not mean the manuscript is submission-ready**. Without alignm
 
 The original shell entry point remains available:
 ```bash
-bash references/test-translation-structure.sh source.tex target.tex glossary.json
+bash skills/sci-translation/references/test-translation-structure.sh source.tex target.tex glossary.json
 ```
 
 Neither shell test script detects "AI writing" or certifies domain accuracy.
 
 ## Key files
 
-- [SKILL.md](SKILL.md): entry point and release gates.
-- [Terminology approval contract](references/glossary-schema.md): review table, author-approval gate, JSON schema, and alignment format.
-- [Glossary gate script](scripts/check_glossary_gate.py): validates version, entries, and source snapshot; it cannot replace genuine author approval.
-- [Agent contracts](references/agent-contracts.md): callable tools and artifact ownership.
-- [Language guide](references/academic-phraseology-guide.md): faithful, concise, natural expression.
-- [Reader-oriented editing](references/reader-oriented-editing.md): section roles, sentence load, continuity, and post-edit fidelity checks.
-- [Domain profiles](references/domain-profiles.md): field-specific review risks.
-- [Behavioral evaluation](references/behavioral-evaluation.md): model-behavior acceptance plan.
-- [Example glossary](examples/terminology-glossary.sample.json): a field example, not externally verified or automatically applicable.
-- [Translation example](examples/translation-diff-sample.md): a constructed case, not evidence of published performance.
+- [Translation skill](skills/sci-translation/SKILL.md): entry point and release gates.
+- [academic-humanizer](skills/academic-humanizer/SKILL.md): separately installable report-driven editing skill, with the complete upstream Humanizer framework and its MIT license.
+- [Terminology approval contract](skills/sci-translation/references/glossary-schema.md): review table, author-approval gate, JSON schema, and alignment format.
+- [Glossary gate script](skills/sci-translation/scripts/check_glossary_gate.py): validates version, entries, and source snapshot; it cannot replace genuine author approval.
+- [Agent contracts](skills/sci-translation/references/agent-contracts.md): callable tools and artifact ownership.
+- [Language guide](skills/sci-translation/references/academic-phraseology-guide.md): faithful, concise, natural expression.
+- [Reader-oriented editing](skills/sci-translation/references/reader-oriented-editing.md): section roles, sentence load, continuity, and post-edit fidelity checks.
+- [Domain profiles](skills/sci-translation/references/domain-profiles.md): field-specific review risks.
+- [Behavioral evaluation](skills/sci-translation/references/behavioral-evaluation.md): model-behavior acceptance plan.
+- [Example glossary](skills/sci-translation/examples/terminology-glossary.sample.json): a field example, not externally verified or automatically applicable.
+- [Translation example](skills/sci-translation/examples/translation-diff-sample.md): a constructed case, not evidence of published performance.
 
 ## Version 1.60 update
 

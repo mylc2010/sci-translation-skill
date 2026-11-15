@@ -8,7 +8,7 @@ import re
 import sys
 
 root = Path(sys.argv[1])
-required = ["SKILL.md", "README.md", "README_EN.md", "scripts/audit_translation.py", "scripts/check_glossary_gate.py", "scripts/test_audit_translation.py", "scripts/test_glossary_gate.py", "examples/terminology-glossary.sample.json"]
+required = ["SKILL.md", "scripts/audit_translation.py", "scripts/check_glossary_gate.py", "scripts/test_audit_translation.py", "scripts/test_glossary_gate.py", "examples/terminology-glossary.sample.json"]
 for name in required:
     if not (root / name).is_file():
         raise SystemExit(f"Missing resource: {name}")

@@ -1,0 +1,9 @@
+# Author-approved project terminology interchange
+
+Both independent skills may read the same author-owned `terminology-glossary.json` supplied for a manuscript. The file is a project artifact, not a global dictionary or a shared mutable file in either installed skill. Neither skill invokes the other or inherits the other's workflow.
+
+For the translation skill's schema version 2.0, identify entries by `concept_id` and context, with `source_forms`, `canonical`, `allowed_forms`, `forbidden_aliases`, `status` and optional abbreviation/full-form metadata. Follow the canonical translation schema in the translation skill for the complete fields, approval, and version semantics. The humanizer does not reassign canonical terms or assume different concepts are synonyms; preserve terms in context and distinguish legitimate grammatical forms.
+
+Verify the author's explicit approval, glossary version and term fingerprint. Record the actual file path and fingerprint used for each run. On conflict or a new technical term, flag the affected unit and ask the author; do not silently modify the shared glossary. The translation gate's `source_sha256` binds the originally approved source snapshot. A later English manuscript or AI report naturally has a different file hash: record its own hash and provenance separately; do not pretend it matches the original Chinese source or rewrite the approval. If the manuscript version or terminology has changed, review the affected mapping and obtain any necessary author decision.
+
+If the user provides no approved glossary, each skill follows its own intake rules and explicitly states the limitation. Neither creates a shared lock from an example or an unapproved candidate list. The shared contract defines only interchange of an approved terminology artifact; extraction, translation, detection report review, formatting and approval workflows remain independent.

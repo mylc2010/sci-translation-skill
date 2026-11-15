@@ -9,9 +9,9 @@ metadata:
 
 # SCI Translation Skill
 
-目标是提供可追溯、供作者投稿前确认的英文译稿，而不是保证录用或保证无错误。
+目标是提供可追溯、供作者投稿前确认的英文译稿。
 优先级：**原文含义与证据边界 > 概念/术语一致 > 结构与符号 > 清晰自然的英文 > 文风偏好**。
-原文有疑似技术错误时，保留其可识别含义并单列问题，不在翻译中悄悄“纠正科学”。
+原文有疑似技术错误时，保留其可识别含义并单列问题，不在翻译中悄悄“纠正”。
 
 ## 选择模式
 
@@ -52,6 +52,7 @@ metadata:
 
 ## 1. 全稿术语表：作者确认后才翻译
 
+作者批准的项目词表也可供其他独立工作流读取；交接规则见 [glossary-interchange.md](references/glossary-interchange.md)，不改变本技能的翻译或审批流程。
 先读作者已有词表/表格，再从整篇原稿的标题、摘要、正文、公式说明、图表、算法、附录提取项目名、方法、数据集、指标、威胁模型、医学/工程专有词、缩写及其完整英文。按概念和语境去重，不把每个普通词都列入审批。
 按 [glossary-schema.md](references/glossary-schema.md) 生成**给作者审阅的表格**：中文/原文形式、语境与位置、唯一规范英文、缩写及全称、准用词形、争议项与证据；同时保存机器可读词表。显示未覆盖的原稿部分。
 单人审阅且约 30 项以内时默认用 Markdown；条目更多，或需多人批注、筛选冲突项、跟踪逐项决定时用可编辑 Excel。协作复杂度优先于数量；两种审阅格式都对应同一份机器可读词表，不生成两套独立术语版本。具体规则见 [glossary-schema.md](references/glossary-schema.md)。
@@ -126,8 +127,3 @@ alignment.json 格式见 glossary-schema；没有对齐输入时只做文档级�
 原稿有 HTML 实体、Markdown 混入 TeX 等问题时，保留原文件，并在 formatting-changes.md 中记录净化修订。
 仅用户需要时导出 Word/PDF；遵循用户模板，不擅换为通用“三线表/Times New Roman”模板。
 独立 LaTeX 片段不能声称通过完整论文编译；工具不存在则明确未编译/未渲染。
-
-## 维护验证
-
-运行 bash references/test-skill-integrity.sh 检查资源和确定性测试。
-真实模型行为案例见 [behavioral-evaluation.md](references/behavioral-evaluation.md)；结果应报告样本、执行方式和未验证领域，不把脚本通过率当成翻译质量。
